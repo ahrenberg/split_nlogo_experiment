@@ -23,7 +23,7 @@ Requirements and testing
 
 split_nlogo_experiment requires Python <www.python.org> and has been tested with Python 2.7 and 3.2, other Python3 versions should work as well, and perhaps also Python 2.6 (though this has not been tested).
 
-The generated XML files was tested with BehavioralSpace in Netlogo 4.1.3 and 5.0RC7 .
+The generated XML files was tested with BehaviorSpace in Netlogo 4.1.3 and 5.0RC7 .
 
 
 Brief manual
@@ -58,14 +58,14 @@ Note that all the output directory must exist and be writable. If not an error i
 How many XML files are generated?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Short answer: as many as you have unique combinations of variable values in your BehavioralSpace. You can easily compute it by taking the number of runs that Netlogo reports for your experiment and divide this by the number of repetitions you have entered. (Repetitions are not split by the script.)
+Short answer: as many as you have unique combinations of variable values in your BehaviorSpace. You can easily compute it by taking the number of runs that Netlogo reports for your experiment and divide this by the number of repetitions you have entered. (Repetitions are not split by the script.)
 
-For example if you have two variables a, and b, and you have configured your BehavioralSpace so that [a 1 2 3] and [b 4 5], That is, there are three possible values for a (1, 2, or 3), and two for b (4 or 5). There are six combinations of individual values for a, and b. (a=1, b=4) (a=1, b=5), (a=2, b=4), et c. split_nlogo_experiment will construct one XML file for each of these combinations and number then from 0 to 5.
+For example if you have two variables a, and b, and you have configured your BehaviorSpace so that [a 1 2 3] and [b 4 5], That is, there are three possible values for a (1, 2, or 3), and two for b (4 or 5). There are six combinations of individual values for a, and b. (a=1, b=4) (a=1, b=5), (a=2, b=4), et c. split_nlogo_experiment will construct one XML file for each of these combinations and number then from 0 to 5.
 
 Start script templating functionality
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Computing clusters usually have a queuing mechanism where some command script is run in order to commit a job. If the BehavioralSpace experiment result in a large number of simulations this can be a very tedious process if one needs an individual script for each simulation. 
+Computing clusters usually have a queuing mechanism where some command script is run in order to commit a job. If the BehaviorSpace experiment result in a large number of simulations this can be a very tedious process if one needs an individual script for each simulation. 
 
 split_nlogo_experiment has a very basic templating mechanism that may be used to produce an additional file with each simulation XML file. The option --create_script takes a file name as parameter. This file is read and a specialized version having key names replaced with current values are saved for each XML file. Allowed keys are
 
@@ -102,7 +102,7 @@ Appendix
 The problem
 ~~~~~~~~~~~
 
-When constructing simulations it is often desirable to run them with a range of different parameter values in order to investigate each parameter's impact on the overall process. In Netlogo such runs are easily configured using the Behavioral space editor where variables can be assigns arbitrary value ranges. Each possible value of variable values result in an unique simulation run however, and for scientific experiments the number of runs can easily grow huge. Netlogo can run these simulations in parallel threads, but does currently not have native support to distribute them over a grid of computers. This must be done by hand. Neither is there functionality to generate individual set-up files from the BehavioralSpace editor.
+When constructing simulations it is often desirable to run them with a range of different parameter values in order to investigate each parameter's impact on the overall process. In Netlogo such runs are easily configured using the Behavioral space editor where variables can be assigns arbitrary value ranges. Each possible value of variable values result in an unique simulation run however, and for scientific experiments the number of runs can easily grow huge. Netlogo can run these simulations in parallel threads, but does currently not have native support to distribute them over a grid of computers. This must be done by hand. Neither is there functionality to generate individual set-up files from the BehaviorSpace editor.
 
 split_nlogo_experiment was written to do just that.
 
@@ -114,5 +114,5 @@ split_nlogo_experiment searches the experiment XML description for enumeratedVal
 
 Repeated runs are preserved so that every new experiment file will have the same number of repetitions as the original experiment.
 
-Please note that as the program constructs all possible combinations of variable values it is necessary to expand the value sets in the original experiment. (Value sets are the variables you give on a [start step stop] form.) There is a general problem with rounding errors programming such functions in any language, and this leads to a somewhat different behavior for integers and floating point value sets in netlogo experiments. For an example try the ranges [0 2 12] and [0 0.2 1.2] for some variable in the BehavioralSpace editor of netlogo 4.1.3. The former range will give you 7 runs, while the latter only yields 6. I have made an effort to mimic this behavior when I expand the value sets and build experiments. As it is two different implementations and two different programming languages however, there could be cases when you do not get the number of runs netlogo tells you. If so, please let me know about it.
+Please note that as the program constructs all possible combinations of variable values it is necessary to expand the value sets in the original experiment. (Value sets are the variables you give on a [start step stop] form.) There is a general problem with rounding errors programming such functions in any language, and this leads to a somewhat different behavior for integers and floating point value sets in netlogo experiments. For an example try the ranges [0 2 12] and [0 0.2 1.2] for some variable in the BehaviorSpace editor of netlogo 4.1.3. The former range will give you 7 runs, while the latter only yields 6. I have made an effort to mimic this behavior when I expand the value sets and build experiments. As it is two different implementations and two different programming languages however, there could be cases when you do not get the number of runs netlogo tells you. If so, please let me know about it.
 
