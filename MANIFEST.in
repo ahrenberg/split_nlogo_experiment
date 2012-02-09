@@ -1,0 +1,23 @@
+# Manifest include file
+
+# Include ourselves
+
+include MANIFEST.in
+
+# No tilde-files!
+global-exclude *~
+
+# Or pyc files
+global-exclude *.pyc
+
+# Or .git directories and files.
+global-exclude .git*
+
+# Make sure the source file makes it.
+include split_nlogo_experiment.py
+
+# Include the NEWS, BUGS, INSTALL et c. files
+include NEWS BUGS INSTALL README LICENSE
+
+# Exclude any pycache files and the build directory
+exclude __pycache__ build

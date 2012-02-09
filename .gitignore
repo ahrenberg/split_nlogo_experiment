@@ -1,0 +1,20 @@
+# git ignore
+
+# Ignore tilde files
+*~
+
+# Ignore compiled Python
+*.pyc
+
+# Ingore the MANIFEST file.
+MANIFEST
+
+# Ingore scripts directory as the script there is just
+# a copy of the .py file created by the setup.
+scripts
+
+# Ingore the build and dist directories
+
+build
+
+dist
