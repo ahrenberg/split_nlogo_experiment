@@ -41,7 +41,7 @@ To split an experiment called 'experiment' in the file model.nlogo use::
 
    split_nlogo_experiment model.nlogo experiment
 
-This will produce a set of files called experiment<XYZ>.xml where <XYZ> is a zero-padded number. Each XML file represents an unique variable value combination as an experiment. These files can be used with the netlogo switch --setup-file, e.g::
+This will produce a set of files called experiment<XYZ>.xml where <XYZ> is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch --setup-file, e.g::
 
    netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
 
@@ -69,14 +69,29 @@ Computing clusters usually have a queuing mechanism where some command script is
 
 split_nlogo_experiment has a very basic templating mechanism that may be used to produce an additional file with each simulation XML file. The option --create_script takes a file name as parameter. This file is read and a specialized version having key names replaced with current values are saved for each XML file. Allowed keys are
 
-       {job} - Name of the job. Will be the name of the xml-file (minus extension).
-       {combination} - The value of the parameter combination_nr.
-       {experiment} - The value of the parameter experiment.
-       {csv} - File name, including full path, of a experiment-unique csv-file.
-       {setup} - The value of the parameter csvfile.
-       {model} - The value of the parameter nlogofile.
-       {csvfname} - Only the file name part of the {csv} key.
-       {csvfpath} - Only the path part of the {csv} key.
+{job}
+   Name of the job. Will be the name of the xml-file (minus extension).
+
+{combination}
+   The value of the parameter combination_nr.
+       
+{experiment}
+   The value of the parameter experiment.
+       
+{csv}
+   File name, including full path, of a experiment-unique csv-file.
+
+{setup}
+   The value of the parameter csvfile.
+
+{model}
+   The value of the parameter nlogofile.
+
+{csvfname}
+   Only the file name part of the {csv} key.
+   
+{csvfpath}
+   Only the path part of the {csv} key.
 
 As an example consider constructing a PBS script for each experiment. This script will issue special PBS commands creating log files, setting the job name, and finally run netlogo-headless with the right commands. To do this create a template file looking like::
 
