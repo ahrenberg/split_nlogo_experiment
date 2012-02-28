@@ -24,7 +24,7 @@ __author__ = "Lukas Ahrenberg <lukas@ahrenberg.se>"
 
 __license__ = "GPL3"
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 
 import sys
@@ -37,6 +37,7 @@ from xml.dom import minidom
 
 from string import Formatter
 
+import csv
 
 def expandValueSets( value_tuples):
     """
@@ -230,6 +231,7 @@ if __name__ == "__main__":
     aparser.add_argument("--create_script", dest = "script_template_file", help = "Tell the program to generate script files (for instance PBS files) alongside the xml setup files. A template file must be provided. See the external documentation for more details.")
     aparser.add_argument("--script_output_dir", help = "Path to output directory for script files. If not specified, the same directory as for the xml setup files is used.")
     aparser.add_argument("--csv_output_dir", help = "Path to output directory where the table data from the simulations will be saved. Use with script files to set output directory for executed scripts. If not specified, the same directory as for the xml setup files is used.")
+    aparser.add_argument("--create_run_table", action="store_true", help = "Create a csv file containing a table of run numbers and corresponding parameter values. Will be named as the experiment but postfixed with '_run_table.csv'.")
     aparser.add_argument("--no_path_translation", action="store_true", help = "Turn off automatic path translation when generating scripts. Advanced use. By default all file and directory paths given are translated into absolute paths, and the existence of directories are tested. (This is because netlogo-headless.sh always run in the netlogo directory, which create problems with relative paths.) However automatic path translation may cause problems for users who, for instance, want to give paths that do yet exist, or split experiments on a different file system from where the simulations will run. In such cases enabling this option preserves the paths given to the program as they are and it is up to the user to make sure these will work.")
     aparser.add_argument("-v", "--version", action = "version", version = "split_nlogo_experiment version {0}".format(__version__))
 
@@ -350,6 +352,9 @@ if __name__ == "__main__":
             
             # Now create the different individual runs.
             enum = 0
+            # Keep track of the parameter values in a run table.
+            run_table = []
+            ENR_STR = "Experiment number"
             if num_individual_runs > 1:
                 vsgen = expandValueSets(value_tuples)
             else:
@@ -359,6 +364,11 @@ if __name__ == "__main__":
                 vsgen = [[]]
 
             for exp in vsgen:
+                # Add header in case we are on the first row.
+                if enum < 1:
+                    run_table.append([ENR_STR])
+                run_table.append([enum])
+
                 experiment_instance = experiment.cloneNode(deep = True)
                 for evs_name, evs_value in exp:
                     evs = experimentDoc.createElement("enumeratedValueSet")
@@ -367,6 +377,12 @@ if __name__ == "__main__":
                     vnode.setAttribute("value", str(evs_value))
                     evs.appendChild(vnode)
                     experiment_instance.appendChild(evs)
+                    
+                    # Add header in case we are on first pass.
+                    if enum < 1:
+                        run_table[0].append(evs_name)
+                    # Always add the current value.
+                    run_table[-1].append(evs_value)
 
                 # Replace some special characters (including space) with chars that may cause problems in a file name.
                 # This is NOT fail safe right now. Assuming some form of useful experiment naming practice.
@@ -407,7 +423,21 @@ if __name__ == "__main__":
                         exit(ioe.errno)
 
                 enum += 1
-                                         
+            # Check if the run table should be saved.
+            if argument_ns.create_run_table == True:
+                run_table_file_name = os.path.join(argument_ns.output_dir, 
+                                                   argument_ns.output_prefix 
+                                                   + experiment_name
+                                                   + "_run_table.csv")
+                try:
+                    with open(run_table_file_name, 'w') as run_table_file:
+                        rt_csv_writer =  csv.writer(run_table_file)
+                        for row in run_table:
+                            rt_csv_writer.writerow(row)
+                except IOError as ioe:
+                    sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+                    exit(ioe.errno)
+
     # Warn if some experiments could not be found in the file.
     for ename in argument_ns.experiment:
         if ename not in processed_experiments:
