@@ -58,9 +58,11 @@ Note that all the output directory must exist and be writable. If not an error i
 How many XML files are generated?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Short answer: as many as you have unique combinations of variable values in your BehaviorSpace. You can easily compute it by taking the number of runs that Netlogo reports for your experiment and divide this by the number of repetitions you have entered. (Repetitions are not split by the script.)
+Short answer: as many as you have unique combinations of variable values in your BehaviorSpace times the number of repetitions you decide to 'break out' using the --repetitions_per_run switch. 
 
 For example if you have two variables a, and b, and you have configured your BehaviorSpace so that [a 1 2 3] and [b 4 5], That is, there are three possible values for a (1, 2, or 3), and two for b (4 or 5). There are six combinations of individual values for a, and b. (a=1, b=4) (a=1, b=5), (a=2, b=4), et c. split_nlogo_experiment will construct one XML file for each of these combinations and number then from 0 to 5.
+
+Further, assume that you have set the number of repetitions in your BehaviorSpace experiment to be 10. By default split_nlogo_experiment will preserve this so that you end up with 6 unique files, each creating a run repeating 10 times. However if you had invoked split_nlogo_experiment with the switch '--repetitions_per_run 2', you would end up with 30 files (6 variable combinations, each copied  5 times) set up to run the experiment 2 times each. Likewise using '--repetitions_per_run 5' would create 12 files, each repeating the run 5 times.
 
 Start script templating functionality
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,8 +128,6 @@ Technicalities
 ~~~~~~~~~~~~~~
 
 split_nlogo_experiment searches the experiment XML description for enumeratedValueSet tags with more than one value as well as steppedValueSet tags. The XML of these nodes are parsed, and the values for the associated variable stored. Following this, one new experiment for every possible variable-value combination is built where the multi-valued tags have been replaced by enumeratedValueSet tags carrying a single possible value. These are saved to XML files.
-
-Repeated runs are preserved so that every new experiment file will have the same number of repetitions as the original experiment.
 
 Please note that as the program constructs all possible combinations of variable values it is necessary to expand the value sets in the original experiment. (Value sets are the variables you give on a [start step stop] form.) There is a general problem with rounding errors programming such functions in any language, and this leads to a somewhat different behavior for integers and floating point value sets in netlogo experiments. For an example try the ranges [0 2 12] and [0 0.2 1.2] for some variable in the BehaviorSpace editor of netlogo 4.1.3. The former range will give you 7 runs, while the latter only yields 6. I have made an effort to mimic this behavior when I expand the value sets and build experiments. As it is two different implementations and two different programming languages however, there could be cases when you do not get the number of runs netlogo tells you. If so, please let me know about it.
 

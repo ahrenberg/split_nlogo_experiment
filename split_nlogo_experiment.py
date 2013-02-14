@@ -24,7 +24,7 @@ __author__ = "Lukas Ahrenberg <lukas@ahrenberg.se>"
 
 __license__ = "GPL3"
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 
 import sys
@@ -225,6 +225,7 @@ if __name__ == "__main__":
     aparser.add_argument("nlogo_file", help = "Netlogo .nlogo file with the original experiment")
     aparser.add_argument("experiment", nargs = "*", help = "Name of one or more experiments in the nlogo file to expand. If none are given, --all_experiments must be set.")
     aparser.add_argument("--all_experiments", action="store_true", help = "If set all experiments in the .nlogo file will be expanded.")
+    aparser.add_argument("--repetitions_per_run", type=int, nargs = 1, help="Number of repetitions per generated experiment run. If the nlogo file is set to repeat an experiment N times, these will be split into N/n individual experiment runs (each repeating n times), where n is the argument given to this switch. Note that if n does not divide N this operation will result in a lower number of total repetitions.")
     aparser.add_argument("--output_dir", default="./", help = "Path to output directory if not current directory.")
     aparser.add_argument("--output_prefix", default="", help = "Generated files are named after the experiment, if set, the value given for this option will be prefixed to that name.")
     # Scripting options.
@@ -234,7 +235,7 @@ if __name__ == "__main__":
     aparser.add_argument("--create_run_table", action="store_true", help = "Create a csv file containing a table of run numbers and corresponding parameter values. Will be named as the experiment but postfixed with '_run_table.csv'.")
     aparser.add_argument("--no_path_translation", action="store_true", help = "Turn off automatic path translation when generating scripts. Advanced use. By default all file and directory paths given are translated into absolute paths, and the existence of directories are tested. (This is because netlogo-headless.sh always run in the netlogo directory, which create problems with relative paths.) However automatic path translation may cause problems for users who, for instance, want to give paths that do yet exist, or split experiments on a different file system from where the simulations will run. In such cases enabling this option preserves the paths given to the program as they are and it is up to the user to make sure these will work.")
     aparser.add_argument("-v", "--version", action = "version", version = "split_nlogo_experiment version {0}".format(__version__))
-
+    
     argument_ns = aparser.parse_args()
 
 
@@ -292,6 +293,9 @@ if __name__ == "__main__":
             sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
             exit(ioe.errno)
 
+            sys.stdout.write("tst {0}: ".format(argument_ns.repetitions_per_run))
+        
+
     # Start processing.
 
     original_dom = minidom.parseString(experiments_xml)
@@ -316,6 +320,26 @@ if __name__ == "__main__":
             # Store tuples of varying variables and their possible values.
             value_tuples = []
             num_individual_runs = 1
+
+            # Number of repetieitons.
+            # In the experiment.
+            # Read original value first. Default is to have all internal.
+            reps_in_experiment = float(experiment.getAttribute("repetitions"));
+            # Repeats of the created experiment.
+            reps_of_experiment = 1;
+            # Check if we should split experiments. An unset switch or value <= 0 means no splitting.
+            if argument_ns.repetitions_per_run != None \
+                    and argument_ns.repetitions_per_run[0] > 0:
+                original_reps = int(experiment.getAttribute("repetitions"))
+                if original_reps >= argument_ns.repetitions_per_run[0]:
+                    reps_in_experiment = argument_ns.repetitions_per_run[0]
+                    reps_of_experiment = original_reps / reps_in_experiment
+                    if(original_reps % reps_in_experiment != 0):
+                        sys.stderr.write("Warning: Number of repetitions per experiment does not divide the number of repetitions in the nlogo file. New number of repetitions is {0} ({1} per experiment in {2} unique script(s)). Original number of repetitions per experiment: {3}.\n"\
+                                             .format((reps_in_experiment*reps_of_experiment), 
+                                                     reps_in_experiment, 
+                                                     reps_of_experiment,
+                                                     original_reps))
 
             # Handle enumeratedValueSets
             for evs in experiment.getElementsByTagName("enumeratedValueSet"):
@@ -364,65 +388,67 @@ if __name__ == "__main__":
                 vsgen = [[]]
 
             for exp in vsgen:
-                # Add header in case we are on the first row.
-                if enum < 1:
-                    run_table.append([ENR_STR])
-                run_table.append([enum])
-
-                experiment_instance = experiment.cloneNode(deep = True)
-                for evs_name, evs_value in exp:
-                    evs = experimentDoc.createElement("enumeratedValueSet")
-                    evs.setAttribute("variable", evs_name)
-                    vnode = experimentDoc.createElement("value")
-                    vnode.setAttribute("value", str(evs_value))
-                    evs.appendChild(vnode)
-                    experiment_instance.appendChild(evs)
-                    
-                    # Add header in case we are on first pass.
+                for exp_clone in range(reps_of_experiment):
+                    # Add header in case we are on the first row.
                     if enum < 1:
-                        run_table[0].append(evs_name)
-                    # Always add the current value.
-                    run_table[-1].append(evs_value)
+                        run_table.append([ENR_STR])
+                    run_table.append([enum])
 
-                # Replace some special characters (including space) with chars that may cause problems in a file name.
-                # This is NOT fail safe right now. Assuming some form of useful experiment naming practice.
-                experiment_name = experiment_instance.getAttribute("name").replace(' ', '_').replace('/', '-').replace('\\','-')
-                xml_filename = os.path.join(argument_ns.output_dir, 
-                                            argument_ns.output_prefix + experiment_name
-                                            + str(enum).zfill(len(str(num_individual_runs)))
-                                            + '.xml')
-                try:
-                    with open(xml_filename, 'w') as xmlfile:
-                        saveExperimentToXMLFile(experiment_instance, xmlfile)
+                    experiment_instance = experiment.cloneNode(deep = True)
+                    experiment_instance.setAttribute("repetitions",str(reps_in_experiment))
+                    for evs_name, evs_value in exp:
+                        evs = experimentDoc.createElement("enumeratedValueSet")
+                        evs.setAttribute("variable", evs_name)
+                        vnode = experimentDoc.createElement("value")
+                        vnode.setAttribute("value", str(evs_value))
+                        evs.appendChild(vnode)
+                        experiment_instance.appendChild(evs)
 
-                except IOError as ioe:
-                    sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
-                    exit(ioe.errno)
+                        # Add header in case we are on first pass.
+                        if enum < 1:
+                            run_table[0].append(evs_name)
+                        # Always add the current value.
+                        run_table[-1].append(evs_value)
 
-                # Should a script file be created?
-                if argument_ns.script_template_file != None:                        
-                    script_file_name = os.path.join(argument_ns.script_output_dir, 
-                                                    argument_ns.output_prefix 
-                                                    + experiment_name
-                                                    +"_script"
-                                                    + str(enum).zfill(len(str(num_individual_runs)))
-                                                    + script_extension)
+                    # Replace some special characters (including space) with chars that may cause problems in a file name.
+                    # This is NOT fail safe right now. Assuming some form of useful experiment naming practice.
+                    experiment_name = experiment_instance.getAttribute("name").replace(' ', '_').replace('/', '-').replace('\\','-')
+                    xml_filename = os.path.join(argument_ns.output_dir, 
+                                                argument_ns.output_prefix + experiment_name
+                                                + str(enum).zfill(len(str(num_individual_runs)))
+                                                + '.xml')
                     try:
-                        with open(script_file_name,'w') as scriptfile:
-                            createScriptFile(
-                                scriptfile,
-                                xml_filename, 
-                                nlogo_file_abs, 
-                                experiment.getAttribute("name"),
-                                enum,
-                                script_template_string,
-                                csv_output_dir = argument_ns.csv_output_dir,
-                                )
+                        with open(xml_filename, 'w') as xmlfile:
+                            saveExperimentToXMLFile(experiment_instance, xmlfile)
+
                     except IOError as ioe:
                         sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
                         exit(ioe.errno)
 
-                enum += 1
+                    # Should a script file be created?
+                    if argument_ns.script_template_file != None:                        
+                        script_file_name = os.path.join(argument_ns.script_output_dir, 
+                                                        argument_ns.output_prefix 
+                                                        + experiment_name
+                                                        +"_script"
+                                                        + str(enum).zfill(len(str(num_individual_runs)))
+                                                        + script_extension)
+                        try:
+                            with open(script_file_name,'w') as scriptfile:
+                                createScriptFile(
+                                    scriptfile,
+                                    xml_filename, 
+                                    nlogo_file_abs, 
+                                    experiment.getAttribute("name"),
+                                    enum,
+                                    script_template_string,
+                                    csv_output_dir = argument_ns.csv_output_dir,
+                                    )
+                        except IOError as ioe:
+                            sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+                            exit(ioe.errno)
+
+                    enum += 1
             # Check if the run table should be saved.
             if argument_ns.create_run_table == True:
                 run_table_file_name = os.path.join(argument_ns.output_dir, 
