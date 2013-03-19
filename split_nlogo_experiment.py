@@ -324,7 +324,7 @@ if __name__ == "__main__":
             # Number of repetieitons.
             # In the experiment.
             # Read original value first. Default is to have all internal.
-            reps_in_experiment = float(experiment.getAttribute("repetitions"));
+            reps_in_experiment = int(experiment.getAttribute("repetitions"));
             # Repeats of the created experiment.
             reps_of_experiment = 1;
             # Check if we should split experiments. An unset switch or value <= 0 means no splitting.
@@ -332,8 +332,8 @@ if __name__ == "__main__":
                     and argument_ns.repetitions_per_run[0] > 0:
                 original_reps = int(experiment.getAttribute("repetitions"))
                 if original_reps >= argument_ns.repetitions_per_run[0]:
-                    reps_in_experiment = argument_ns.repetitions_per_run[0]
-                    reps_of_experiment = original_reps / reps_in_experiment
+                    reps_in_experiment = int(argument_ns.repetitions_per_run[0])
+                    reps_of_experiment = int(original_reps / reps_in_experiment)
                     if(original_reps % reps_in_experiment != 0):
                         sys.stderr.write("Warning: Number of repetitions per experiment does not divide the number of repetitions in the nlogo file. New number of repetitions is {0} ({1} per experiment in {2} unique script(s)). Original number of repetitions per experiment: {3}.\n"\
                                              .format((reps_in_experiment*reps_of_experiment), 
