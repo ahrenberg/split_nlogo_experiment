@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python3
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ def createScriptFile(script_fp,
     for lt, fn, fs, co in strformatter.parse(script_template):
         if fn != None and fn not in formatmap.keys():
             print(f"Warning: Unsupported key '{{{fn}}}' in script template. Ignoring.")
-            formatmap[fn] = "{" + fn + "}"
+            formatmap[fn] = f"{{{fn}}}"
             
     script_fp.write(script_template.format(**formatmap))
 
