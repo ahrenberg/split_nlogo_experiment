@@ -209,8 +209,7 @@ def createScriptFile(script_fp,
     # look for unknown keys. Do not replace them, but print warning.
     for lt, fn, fs, co in strformatter.parse(script_template):
         if fn != None and fn not in formatmap.keys():
-            print("Warning: Unsupported key '{{{0}}}' in script template. Ignoring."\
-                      .format(fn))
+            print(f"Warning: Unsupported key '{{{fn}}}' in script template. Ignoring.")
             formatmap[fn] = "{" + fn + "}"
             
     script_fp.write(script_template.format(**formatmap))
@@ -230,7 +229,7 @@ if __name__ == "__main__":
     aparser.add_argument("--csv_output_dir", help = "Path to output directory where the table data from the simulations will be saved. Use with script files to set output directory for executed scripts. If not specified, the same directory as for the xml setup files is used.")
     aparser.add_argument("--create_run_table", action="store_true", help = "Create a csv file containing a table of run numbers and corresponding parameter values. Will be named as the experiment but postfixed with '_run_table.csv'.")
     aparser.add_argument("--no_path_translation", action="store_true", help = "Turn off automatic path translation when generating scripts. Advanced use. By default all file and directory paths given are translated into absolute paths, and the existence of directories are tested. (This is because netlogo-headless.sh always run in the netlogo directory, which create problems with relative paths.) However automatic path translation may cause problems for users who, for instance, want to give paths that do yet exist, or split experiments on a different file system from where the simulations will run. In such cases enabling this option preserves the paths given to the program as they are and it is up to the user to make sure these will work.")
-    aparser.add_argument("-v", "--version", action = "version", version = "split_nlogo_experiment version {0}".format(__version__))
+    aparser.add_argument("-v", "--version", action = "version", version = f"split_nlogo_experiment version {__version__}")
     
     argument_ns = aparser.parse_args()
 
@@ -251,9 +250,9 @@ if __name__ == "__main__":
             alist = nlogo_text.split("<experiments>")
             for elem in alist[1:]:
                 blist = elem.split("</experiments>")
-                experiments_xml += "<experiments>{0}</experiments>\n".format(blist[0])
+                experiments_xml += f"<experiments>{blist[0]}</experiments>\n"
     except IOError as ioe:
-        sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+        sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
         sys.exit(ioe.errno)
 
 
@@ -286,10 +285,10 @@ if __name__ == "__main__":
             with open(argument_ns.script_template_file) as pbst:
                 script_template_string = pbst.read()
         except IOError as ioe:
-            sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+            sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
             sys.exit(ioe.errno)
 
-            sys.stdout.write("tst {0}: ".format(argument_ns.repetitions_per_run))
+            sys.stdout.write(f"tst {argument_ns.repetitions_per_run}: ")
         
 
     # Start processing.
@@ -331,11 +330,7 @@ if __name__ == "__main__":
                     reps_in_experiment = int(argument_ns.repetitions_per_run[0])
                     reps_of_experiment = int(original_reps / reps_in_experiment)
                     if(original_reps % reps_in_experiment != 0):
-                        sys.stderr.write("Warning: Number of repetitions per experiment does not divide the number of repetitions in the nlogo file. New number of repetitions is {0} ({1} per experiment in {2} unique script(s)). Original number of repetitions per experiment: {3}.\n"\
-                                             .format((reps_in_experiment*reps_of_experiment), 
-                                                     reps_in_experiment, 
-                                                     reps_of_experiment,
-                                                     original_reps))
+                        sys.stderr.write(f"Warning: Number of repetitions per experiment does not divide the number of repetitions in the nlogo file. New number of repetitions is {(reps_in_experiment*reps_of_experiment)} ({reps_in_experiment} per experiment in {reps_of_experiment} unique script(s)). Original number of repetitions per experiment: {original_reps}.\n")
 
             # Handle enumeratedValueSets
             for evs in experiment.getElementsByTagName("enumeratedValueSet"):
@@ -418,7 +413,7 @@ if __name__ == "__main__":
                             saveExperimentToXMLFile(experiment_instance, xmlfile)
 
                     except IOError as ioe:
-                        sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+                        sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
                         sys.exit(ioe.errno)
 
                     # Should a script file be created?
@@ -441,7 +436,7 @@ if __name__ == "__main__":
                                     csv_output_dir = argument_ns.csv_output_dir,
                                     )
                         except IOError as ioe:
-                            sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+                            sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
                             sys.exit(ioe.errno)
 
                     enum += 1
@@ -457,10 +452,10 @@ if __name__ == "__main__":
                         for row in run_table:
                             rt_csv_writer.writerow(row)
                 except IOError as ioe:
-                    sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
+                    sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
                     sys.exit(ioe.errno)
 
     # Warn if some experiments could not be found in the file.
     for ename in argument_ns.experiment:
         if ename not in processed_experiments:
-            print("Warning - Experiment named '{0}' not found in model file '{1}'".format(ename, argument_ns.nlogo_file))
+            print(f"Warning - Experiment named '{ename}' not found in model file '{argument_ns.nlogo_file}'")
