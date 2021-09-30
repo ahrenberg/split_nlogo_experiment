@@ -242,7 +242,7 @@ if __name__ == "__main__":
     # Check so that there's either experiments listed, or the all_experiments switch is set.
     if len(argument_ns.experiment) < 1 and argument_ns.all_experiments == False:
         print("Warning. You must either list one or more experiments to expand, or use the --all_experiments switch.")
-        exit(0)
+        sys.exit(0)
 
     experiments_xml = ""
     try:
@@ -258,7 +258,7 @@ if __name__ == "__main__":
                 experiments_xml += "<experiments>{0}</experiments>\n".format(blist[0])
     except IOError as ioe:
         sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
-        exit(ioe.errno)
+        sys.exit(ioe.errno)
 
 
     # Absolute paths.
@@ -291,7 +291,7 @@ if __name__ == "__main__":
                 script_template_string = pbst.read()
         except IOError as ioe:
             sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
-            exit(ioe.errno)
+            sys.exit(ioe.errno)
 
             sys.stdout.write("tst {0}: ".format(argument_ns.repetitions_per_run))
         
@@ -423,7 +423,7 @@ if __name__ == "__main__":
 
                     except IOError as ioe:
                         sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
-                        exit(ioe.errno)
+                        sys.exit(ioe.errno)
 
                     # Should a script file be created?
                     if argument_ns.script_template_file != None:                        
@@ -446,7 +446,7 @@ if __name__ == "__main__":
                                     )
                         except IOError as ioe:
                             sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
-                            exit(ioe.errno)
+                            sys.exit(ioe.errno)
 
                     enum += 1
             # Check if the run table should be saved.
@@ -462,7 +462,7 @@ if __name__ == "__main__":
                             rt_csv_writer.writerow(row)
                 except IOError as ioe:
                     sys.stderr.write(ioe.strerror + " '{0}'\n".format(ioe.filename))
-                    exit(ioe.errno)
+                    sys.exit(ioe.errno)
 
     # Warn if some experiments could not be found in the file.
     for ename in argument_ns.experiment:
