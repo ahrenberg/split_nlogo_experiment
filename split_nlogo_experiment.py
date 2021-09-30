@@ -396,7 +396,7 @@ if __name__ == "__main__":
                     xml_filename = os.path.join(argument_ns.output_dir, 
                                                 argument_ns.output_prefix + experiment_name
                                                 + '_'
-                                                + str(enum)
+                                                + str(enum).zfill(len(str(num_individual_runs)))
                                                 + '.xml')
                     try:
                         with open(xml_filename, 'w') as xmlfile:
