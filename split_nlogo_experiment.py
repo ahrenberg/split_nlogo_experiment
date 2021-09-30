@@ -217,10 +217,6 @@ def createScriptFile(script_fp,
 
                           
 if __name__ == "__main__":
-    
-
-    experiments_to_expand = []
-    
     aparser = argparse.ArgumentParser(description = "Split nlogo behavioral space experiments.")
     aparser.add_argument("nlogo_file", help = "Netlogo .nlogo file with the original experiment")
     aparser.add_argument("experiment", nargs = "*", help = "Name of one or more experiments in the nlogo file to expand. If none are given, --all_experiments must be set.")
