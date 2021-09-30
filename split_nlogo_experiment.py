@@ -486,7 +486,7 @@ if __name__ == "__main__":
                         script_file_name = os.path.join(argument_ns.script_output_dir, 
                                                         argument_ns.output_prefix 
                                                         + experiment_name
-                                                        +"_script"
+                                                        + "_script_"
                                                         + str(enum).zfill(len(str(num_individual_runs)))
                                                         + script_extension)
                         try:
