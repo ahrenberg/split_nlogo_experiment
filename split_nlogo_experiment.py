@@ -127,6 +127,70 @@ def saveExperimentToXMLFile(experiment, xmlfile):
     xmlfile.write("""</experiments>\n""")
     
 
+
+def createArrayScriptFile(script_fp,
+                     xmlfile, 
+                     nlogofile,
+                     experiment,
+                     combination_nr,
+                     script_template,
+                     csv_output_dir = "./"
+                     ):
+    """
+    Create an array job script file from a template string.
+
+    Parameters
+    ----------
+
+    script_fp : file pointer
+       File opened for writing.    
+
+    xmlfile : string
+       File name and path of the xml experiment file.
+       This string will be accessible through the key {setup}
+       in the script_template string.
+
+    nlogofile : string
+       File name and path of the ,nlogo model file.
+       This string will be accessible through the key {model}
+       in the script_template string.
+
+    experiment : string
+       Name of the experiment.
+       This string will be accessible through the key {experiment}
+       in the script_template string.
+
+    combination_nr : int
+       The experiment combination number.
+       This value will be accessible through the key {combination}
+       in the script_template string.
+
+    script_template : str
+       The script template string. This string will be cloned for each script
+       but the following keys can be used and will have individual values.
+       {job} - Name of the job. Will be the name of the xml-file (minus extension).
+       {combination} - The value of the parameter combination_nr.
+       {experiment} - The value of the parameter experiment.
+       {csv} - File name, including full path, of a experiment-unique csv-file.
+       {setup} - The value of the parameter csvfile.
+       {model} - The value of the parameter nlogofile.
+       {csvfname} - Only the file name part of the {csv} key.
+       {csvfpath} - Only the path part of the {csv} key.
+       
+    csv_output_dir : str, optional
+       Path to the directory used when constructing the {csv} and {csvfpath} 
+       keys.
+
+
+    Returns
+    -------
+
+    file_name : str
+       Name of the file name used for the script.
+
+    """
+
+
 def createScriptFile(script_fp,
                      xmlfile, 
                      nlogofile,
@@ -406,6 +470,7 @@ if __name__ == "__main__":
                     experiment_name = experiment_instance.getAttribute("name").replace(' ', '_').replace('/', '-').replace('\\','-')
                     xml_filename = os.path.join(argument_ns.output_dir, 
                                                 argument_ns.output_prefix + experiment_name
+                                                + '_'
                                                 + str(enum).zfill(len(str(num_individual_runs)))
                                                 + '.xml')
                     try:
