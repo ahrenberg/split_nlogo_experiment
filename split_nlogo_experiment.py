@@ -129,12 +129,11 @@ def saveExperimentToXMLFile(experiment, xmlfile):
 
 
 def createArrayScriptFile(script_fp,
-                     xmlfile, 
                      nlogofile,
                      experiment,
-                     combination_nr,
+                     numexps,
                      script_template,
-                     csv_output_dir = "./"
+                     csv_output_dir="."
                      ):
     """
     Create an array job script file from a template string.
@@ -143,15 +142,10 @@ def createArrayScriptFile(script_fp,
     ----------
 
     script_fp : file pointer
-       File opened for writing.    
-
-    xmlfile : string
-       File name and path of the xml experiment file.
-       This string will be accessible through the key {setup}
-       in the script_template string.
+       File opened for writing.
 
     nlogofile : string
-       File name and path of the ,nlogo model file.
+       File name and path of the nlogo model file.
        This string will be accessible through the key {model}
        in the script_template string.
 
@@ -165,20 +159,19 @@ def createArrayScriptFile(script_fp,
        This value will be accessible through the key {combination}
        in the script_template string.
 
+    numexps : int
+       Number of experiments.
+       This value will be accessible through the key {numexps}
+
     script_template : str
        The script template string. This string will be cloned for each script
        but the following keys can be used and will have individual values.
-       {job} - Name of the job. Will be the name of the xml-file (minus extension).
-       {combination} - The value of the parameter combination_nr.
-       {experiment} - The value of the parameter experiment.
-       {csv} - File name, including full path, of a experiment-unique csv-file.
-       {setup} - The value of the parameter csvfile.
        {model} - The value of the parameter nlogofile.
-       {csvfname} - Only the file name part of the {csv} key.
-       {csvfpath} - Only the path part of the {csv} key.
-       
+       {experiment} - The value of the parameter experiment.
+       {csvfpath} - The value of the parameter csv_output_dir.
+
     csv_output_dir : str, optional
-       Path to the directory used when constructing the {csv} and {csvfpath} 
+       Path to the directory containing the CSV files.
        keys.
 
 
@@ -190,93 +183,25 @@ def createArrayScriptFile(script_fp,
 
     """
 
-
-def createScriptFile(script_fp,
-                     xmlfile, 
-                     nlogofile,
-                     experiment,
-                     combination_nr,
-                     script_template,
-                     csv_output_dir = "./"
-                     ):
-    """
-    Create a script file from a template string.
-
-    Parameters
-    ----------
-
-    script_fp : file pointer
-       File opened for writing.    
-
-    xmlfile : string
-       File name and path of the xml experiment file.
-       This string will be accessible through the key {setup}
-       in the script_template string.
-
-    nlogofile : string
-       File name and path of the ,nlogo model file.
-       This string will be accessible through the key {model}
-       in the script_template string.
-
-    experiment : string
-       Name of the experiment.
-       This string will be accessible through the key {experiment}
-       in the script_template string.
-
-    combination_nr : int
-       The experiment combination number.
-       This value will be accessible through the key {combination}
-       in the script_template string.
-
-    script_template : str
-       The script template string. This string will be cloned for each script
-       but the following keys can be used and will have individual values.
-       {job} - Name of the job. Will be the name of the xml-file (minus extension).
-       {combination} - The value of the parameter combination_nr.
-       {experiment} - The value of the parameter experiment.
-       {csv} - File name, including full path, of a experiment-unique csv-file.
-       {setup} - The value of the parameter csvfile.
-       {model} - The value of the parameter nlogofile.
-       {csvfname} - Only the file name part of the {csv} key.
-       {csvfpath} - Only the path part of the {csv} key.
-       
-    csv_output_dir : str, optional
-       Path to the directory used when constructing the {csv} and {csvfpath} 
-       keys.
-
-
-    Returns
-    -------
-
-    file_name : str
-       Name of the file name used for the script.
-
-    """
-    jobname = os.path.splitext(os.path.basename(xmlfile))[0]
-
-
-    fname = jobname + ".csv"
-    csvfile = os.path.join(csv_output_dir, fname)
+    modelname = os.path.basename(nlogofile).split('.')[0]
 
     strformatter = Formatter()
     formatmap = {
-        "job" : jobname, 
-        "combination" : combination_nr, 
-        "experiment" : experiment,
-        "csv" : csvfile,
-        "setup" : xmlfile,
-        "model" : nlogofile,
-        "csvfname" : fname,
-        "csvfpath" : csv_output_dir
+        "experiment": experiment,
+        "numexps": numexps,
+        "model": nlogofile,
+        "modelname": modelname,
+        "csvfpath": csv_output_dir
         }
     # Use string formatter to go through the script template and
     # look for unknown keys. Do not replace them, but print warning.
-    for lt, fn, fs, co in strformatter.parse(script_template):
-        if fn != None and fn not in formatmap.keys():
+    for _, fn, _, _ in strformatter.parse(script_template):
+        if fn is not None and fn not in formatmap.keys():
             print(f"Warning: Unsupported key '{{{fn}}}' in script template. Ignoring.")
             formatmap[fn] = f"{{{fn}}}"
-            
+
     script_fp.write(script_template.format(**formatmap))
+
 
                           
 if __name__ == "__main__":
@@ -430,7 +355,7 @@ if __name__ == "__main__":
 
             
             # Now create the different individual runs.
-            enum = 0
+            enum = 1
             # Keep track of the parameter values in a run table.
             run_table = []
             ENR_STR = "Experiment number"
@@ -471,7 +396,7 @@ if __name__ == "__main__":
                     xml_filename = os.path.join(argument_ns.output_dir, 
                                                 argument_ns.output_prefix + experiment_name
                                                 + '_'
-                                                + str(enum).zfill(len(str(num_individual_runs)))
+                                                + str(enum)
                                                 + '.xml')
                     try:
                         with open(xml_filename, 'w') as xmlfile:
@@ -480,29 +405,6 @@ if __name__ == "__main__":
                     except IOError as ioe:
                         sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
                         sys.exit(ioe.errno)
-
-                    # Should a script file be created?
-                    if argument_ns.script_template_file != None:                        
-                        script_file_name = os.path.join(argument_ns.script_output_dir, 
-                                                        argument_ns.output_prefix 
-                                                        + experiment_name
-                                                        + "_script_"
-                                                        + str(enum).zfill(len(str(num_individual_runs)))
-                                                        + script_extension)
-                        try:
-                            with open(script_file_name,'w') as scriptfile:
-                                createScriptFile(
-                                    scriptfile,
-                                    xml_filename, 
-                                    nlogo_file_abs, 
-                                    experiment.getAttribute("name"),
-                                    enum,
-                                    script_template_string,
-                                    csv_output_dir = argument_ns.csv_output_dir,
-                                    )
-                        except IOError as ioe:
-                            sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
-                            sys.exit(ioe.errno)
 
                     enum += 1
             # Check if the run table should be saved.
@@ -519,6 +421,30 @@ if __name__ == "__main__":
                 except IOError as ioe:
                     sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
                     sys.exit(ioe.errno)
+
+
+    # Should a script file be created?
+    numexps = enum - 1
+    if argument_ns.script_template_file != None:
+        script_file_name = os.path.join(argument_ns.script_output_dir, 
+                                        argument_ns.output_prefix 
+                                        + experiment_name
+                                        + "_script"
+                                        + script_extension)
+        try:
+            print(f'DEBUG: numexps = {numexps}')
+            with open(script_file_name, 'w') as scriptfile:
+                createArrayScriptFile(
+                    scriptfile,
+                    nlogo_file_abs,
+                    experiment.getAttribute("name"),
+                    numexps,
+                    script_template_string,
+                    csv_output_dir=argument_ns.csv_output_dir,
+                    )
+        except IOError as ioe:
+            sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
+            sys.exit(ioe.errno)
 
     # Warn if some experiments could not be found in the file.
     for ename in argument_ns.experiment:
