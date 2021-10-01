@@ -64,13 +64,6 @@ Computing clusters usually have a queuing mechanism where some command script is
 
 `split_nlogo_experiment` has a very basic templating mechanism that may be used to produce an additional file with each simulation XML file. The option `--create_script` takes a file name as parameter. This file is read and a specialized version having key names replaced with current values are saved for each XML file. Allowed keys are:
 
-### DEBUG
-# {model} - [model] - The value of the parameter nlogofile.
-# {modelname} - [modelname] - Model name.
-# {experiment} - [experiment] - The value of the parameter experiment.
-# {csvfpath} - [csvfpath] - The value of the parameter csv_output_dir.
-# {numexps} - [numexps] - Total number of experiments.
-
 * {model}
   * The value of the parameter nlogofile.
 * {modelname}
