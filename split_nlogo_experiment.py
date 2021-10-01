@@ -211,7 +211,7 @@ if __name__ == "__main__":
     ### Either specify one experiment, or all experiments, but not both
     group = aparser.add_mutually_exclusive_group(required=True)
     group.add_argument("-e", "--experiment", nargs = "*", help = "Name of one or more experiments in the nlogo file to expand. If none are given, --all_experiments must be set.")
-    group.add_argument("-a", "--all_experiments", action="store_true", help = "If set all experiments in the .nlogo file will be expanded.")
+    group.add_argument("-a", "--all_experiments", action="store_true", help = "If set, all experiments in the .nlogo file will be expanded.")
 
     aparser.add_argument("--repetitions_per_run", type=int, default=1, help="Number of repetitions per generated experiment run. If the nlogo file is set to repeat an experiment N times, these will be split into N/n individual experiment runs (each repeating n times), where n is the argument given to this switch. Note that if n does not divide N this operation will result in a lower number of total repetitions.")
     aparser.add_argument("--output_dir", default="./", help = "Path to output directory if not current directory.")
