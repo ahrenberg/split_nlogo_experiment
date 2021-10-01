@@ -36,7 +36,7 @@ To split an experiment called 'experiment' in the file model.nlogo use:
 
     split_nlogo_experiment model.nlogo experiment
 
-This will produce a set of files called `experiment<XYZ>.xml` where `<XYZ>` is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch `--setup-file`, e.g. to run the first value combination:
+This will produce a set of files called `experiment_<XYZ>.xml` where `<XYZ>` is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch `--setup-file`, e.g. to run the first value combination:
 
     netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
 
@@ -44,7 +44,7 @@ The XML files are always given the name of the experiment plus a sequence number
 
     split_nlogo_experiment --output_dir /tmp --output_prefix my_model.nlogo experiment
 
-will cause the XML files to be saved in the directory `/tmp` and be named `my_experiment<XYZ>.xml` where `<XYZ>` is, as before, a number from 1 up to N, N being the number of possible variable value combinations.
+will cause the XML files to be saved in the directory `/tmp` and be named `experiment_<XYZ>.xml` where `<XYZ>` is, as before, a number from 1 up to N, N being the number of possible variable value combinations.
 
 Note that all the output directory must exist and be writable. If not an error is produced and the program exits.
 
@@ -58,9 +58,9 @@ Further, assume that you have set the number of repetitions in your BehaviorSpac
 
 ### Start script templating functionality
 
-Computing clusters usually have a queuing mechanism where some command script is run in order to commit a job. If the BehaviorSpace experiment result in a large number of simulations this can be a very tedious process if one needs an individual script for each simulation. 
+Computing clusters usually have a queuing mechanism where some job script is submitted in order to run a job. If the BehaviorSpace experiment results in a large number of simulations, this can be a very tedious process if one needs an individual script for each simulation. 
 
-`split_nlogo_experiment` has a very basic templating mechanism that may be used to produce an additional file with each simulation XML file. The option `--create_script` takes a file name as parameter. This file is read and a specialized version having key names replaced with current values are saved for each XML file. Allowed keys are:
+`split_nlogo_experiment` has a very basic templating mechanism that may be used to produce a single job-array script which deals with every simulation XML file. The option `--create_script` takes a file name as parameter. This file is read and a specialized version having key names replaced with current values are saved for each XML file. Allowed keys are:
 
 * `{model}`
   * The value of the parameter nlogofile.
@@ -73,20 +73,31 @@ Computing clusters usually have a queuing mechanism where some command script is
 * `{numexps}`
   * Total number of experiments.
 
-As an example consider constructing a PBS script for each experiment. This script will issue special PBS commands creating log files, setting the job name, and finally run `netlogo-headless.sh` with the right commands. To do this create a template file looking like:
+As an example consider constructing a Slurm script for each experiment. This script will issue special Slurm commands creating log files, setting the job name, and finally run `netlogo-headless.sh` with the right commands. To do this create a template file looking like:
 
-    #!/bin/bash
-    #PBS -N {job}
-    #PBS -o /tmp/{job}.log
-    #PBS -e /tmp/{job}_error.log
+```bash
+#!/bin/bash
+#SBATCH --job-name={experiment}
+#SBATCH --output=%x-%A_%2a.out
+#SBATCH --error=%x-%A_%2a.err
+#SBATCH --array=1-{numexps}
+#SBATCH --mem=40G
     
-    netlogo-headless.sh --model {model} --setup-file {setup} --table {csv}
+ne={numexps}
+formatstr="%0${#ne}d"
+my_task_id=$( printf $formatstr $SLURM_ARRAY_TASK_ID )
 
-Assume this file is called `template.pbs`, then calling `split_nlogo_experiment` as:
+netlogo-headless.sh \
+    --model {model} \
+    --setup-file {experiment}_${my_task_id}.xml \
+    --table {csvfpath}/{experiment}_${my_task_id}.csv
+```
 
-    split_nlogo_experiment --create_script template.pbs model.nlogo experiment
+Assume this file is called `template_slurm.sh`, then calling `split_nlogo_experiment` as:
 
-will, in addition to creating the `experiment<XYZ>.xml` files also create files called `experiment_script<XYZ>.pbs` (file ending will always be the same as for the template file). In these files the keys `{job}` will be replaced by `experiment<XYZ>`, `{model}` by the absolute path name to `model.nlogo`, `{setup}` by the absolute path name to `experiment<XYZ>.xml`, and `{csv}` by the absolute path name to the suggested CSV output file name.
+    split_nlogo_experiment --create_script template_slurm.sh model.nlogo experiment
+
+will, in addition to creating the `experiment_<XYZ>.xml` files also create files called `experiment_script.sh` (file ending will always be the same as for the template file). In these files the keys `{xxx}` will be replaced according to the list above. An annotated example template is included in this source repository.
 
 `split_nlogo_experiment` looks up the absolute path to any file and directory given and use this for the keys. The reason for doing so is that the `netlogo-headless.sh` script make the simulation always run in the netlogo directory. This has the side effect that relative paths will not work. As a work around the script translates all paths to absolute paths. If you want to suppress this behavior and always use the file names and paths as given when calling `split_nlogo_experiment` use the `--no_path_translation` switch.
 
