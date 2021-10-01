@@ -44,7 +44,7 @@ For a full list of options run:
 
 To split an experiment called 'experiment' in the file model.nlogo use:
 
-    split_nlogo_experiment model.nlogo experiment
+    split_nlogo_experiment --nlogo_file model.nlogo --experiment experiment
 
 This will produce a set of files called `experiment_<XYZ>.xml` where `<XYZ>` is 
 a zero-padded number. Each XML file represents a unique variable value 
@@ -59,7 +59,7 @@ number. If you want to prefix the file name for some reason you can use the
 XML files output in some other directory than the current use the 
 `--output_dir` option. For instance:
 
-    split_nlogo_experiment --output_dir /tmp --output_prefix my_model.nlogo experiment
+    split_nlogo_experiment --output_dir /tmp --output_prefix --nlogo_file my_model.nlogo --experiment experiment
 
 will cause the XML files to be saved in the directory `/tmp` and be named 
 `experiment_<XYZ>.xml` where `<XYZ>` is, as before, a number from 1 up to N, N 
@@ -140,7 +140,7 @@ netlogo-headless.sh \
 Assume this file is called `template_slurm.sh`, then calling 
 `split_nlogo_experiment` as:
 
-    split_nlogo_experiment --create_script template_slurm.sh model.nlogo experiment
+    split_nlogo_experiment --create_script template_slurm.sh --nlogo_file model.nlogo --experiment experiment
 
 will, in addition to creating the `experiment_<XYZ>.xml` files also create 
 files called `experiment_script.sh` (file ending will always be the same as for 
