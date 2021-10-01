@@ -305,6 +305,10 @@ if __name__ == "__main__":
 
             experiment = orig_experiment.cloneNode(deep = True)
 
+            if argument_ns.debug:
+                print(f"DEBUG: orig_experiment.getAttribute('name') = {orig_experiment.getAttribute('name')}")
+                print(f"DEBUG: experiment = {experiment}")
+
             # Store tuples of varying variables and their possible values.
             value_tuples = []
             num_individual_runs = 1
@@ -318,6 +322,10 @@ if __name__ == "__main__":
             # Check if we should split experiments. An unset switch or value <= 0 means no splitting.
             if argument_ns.repetitions_per_run > 0:
                 original_reps = int(experiment.getAttribute("repetitions"))
+                if argument_ns.debug:
+                    print(f"DEBUG: argument_ns.repetitions_per_run = {argument_ns.repetitions_per_run}")
+                    print(f"DEBUG: original_reps = {original_reps}")
+                    print("")
                 if original_reps >= argument_ns.repetitions_per_run:
                     reps_in_experiment = argument_ns.repetitions_per_run
                     reps_of_experiment = original_reps // reps_in_experiment
