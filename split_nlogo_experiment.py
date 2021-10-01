@@ -206,9 +206,13 @@ def createArrayScriptFile(script_fp,
                           
 if __name__ == "__main__":
     aparser = argparse.ArgumentParser(description = "Split nlogo behavioral space experiments.")
-    aparser.add_argument("nlogo_file", help = "Netlogo .nlogo file with the original experiment")
-    aparser.add_argument("experiment", nargs = "*", help = "Name of one or more experiments in the nlogo file to expand. If none are given, --all_experiments must be set.")
-    aparser.add_argument("--all_experiments", action="store_true", help = "If set all experiments in the .nlogo file will be expanded.")
+    aparser.add_argument("-n", "--nlogo_file", help = "Netlogo .nlogo file with the original experiment")
+
+    ### Either specify one experiment, or all experiments, but not both
+    group = aparser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-e", "--experiment", nargs = "*", help = "Name of one or more experiments in the nlogo file to expand. If none are given, --all_experiments must be set.")
+    group.add_argument("-a", "--all_experiments", action="store_true", help = "If set all experiments in the .nlogo file will be expanded.")
+
     aparser.add_argument("--repetitions_per_run", type=int, default=1, help="Number of repetitions per generated experiment run. If the nlogo file is set to repeat an experiment N times, these will be split into N/n individual experiment runs (each repeating n times), where n is the argument given to this switch. Note that if n does not divide N this operation will result in a lower number of total repetitions.")
     aparser.add_argument("--output_dir", default="./", help = "Path to output directory if not current directory.")
     aparser.add_argument("--output_prefix", default="", help = "Generated files are named after the experiment, if set, the value given for this option will be prefixed to that name.")
@@ -226,11 +230,6 @@ if __name__ == "__main__":
     if argument_ns.debug:
         print(f"DEBUG: argument_ns = {argument_ns}")
 
-
-    # Check so that there's either experiments listed, or the all_experiments switch is set.
-    if len(argument_ns.experiment) < 1 and argument_ns.all_experiments is False:
-        print("Warning. You must either list one or more experiments to expand, or use the --all_experiments switch.")
-        sys.exit(0)
 
     experiments_xml = ""
     try:
@@ -471,6 +470,7 @@ if __name__ == "__main__":
                 sys.exit(ioe.errno)
 
     # Warn if some experiments could not be found in the file.
-    for ename in argument_ns.experiment:
-        if ename not in processed_experiments:
-            print(f"Warning - Experiment named '{ename}' not found in model file '{argument_ns.nlogo_file}'")
+    if argument_ns.experiment:
+        for ename in argument_ns.experiment:
+            if ename not in processed_experiments:
+                print(f"Warning - Experiment named '{ename}' not found in model file '{argument_ns.nlogo_file}'")
