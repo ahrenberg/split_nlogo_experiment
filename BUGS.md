@@ -2,7 +2,8 @@
 
 ## Reporting
 
-Please report new bugs and issues using the GitHub issue tracker at https://github.com/ahrenberg/split_nlogo_experiment/issues
+Please report new bugs and issues using the GitHub issue tracker at 
+https://github.com/ahrenberg/split_nlogo_experiment/issues
 
 ## Issues
 
