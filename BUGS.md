@@ -12,5 +12,6 @@ Currently no known issues.
 
 ## Bugs
 
-Currently no known bugs.
+* Creation of array job script does not handle multiple experiments and 
+repetitions.
 
