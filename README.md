@@ -11,9 +11,9 @@ License: GNU GPL-3.0. See LICENSE file for details.
 ## About
 
 This script was written to ease the burden of running [Netlogo](https://ccl.northwestern.edu/netlogo/) simulations on computing grids.
-It parses a `.nlogo` file, looking for the `<experiments>` XML seupt, and then constructs unique setup files for each variable value combination in the experiment. Each of these files represents a single simulation and can be run simultaneously on a computing cluster using `netlogo-headless.sh` with the `--setup-file` switch.
+It parses a `.nlogo` file, looking for the `<experiments>` XML setup, and then constructs unique setup files for each variable value combination in the experiment. Each of these files represents a single simulation and can be run simultaneously on a computing cluster using `netlogo-headless.sh` with the `--setup-file` switch.
 
-In addition `split_nlogo_experiment` has basic templating functionality that can be used to automatically build queuing/execution-scripts.
+In addition `split_nlogo_experiment` has basic templating functionality that can be used to automatically generate a job array script.
 
 
 ## Requirements and testing
