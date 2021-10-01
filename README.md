@@ -51,7 +51,7 @@ a zero-padded number. Each XML file represents a unique variable value
 combination as an experiment. These files can be used with the netlogo switch 
 `--setup-file`, e.g. to run the first value combination:
 
-    netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
+    netlogo-headless.sh --model model.nlogo --setup-file experiment_0.xml
 
 The XML files are always given the name of the experiment plus a sequence 
 number. If you want to prefix the file name for some reason you can use the 
