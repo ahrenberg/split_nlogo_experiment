@@ -292,7 +292,7 @@ if __name__ == "__main__":
     experimentDoc = minidom.getDOMImplementation().createDocument(None, "experiments", None)    
 
     # Remember which experiments were processed.
-    processed_experiments = []
+    processed_experiments = {}
     
     for orig_experiment in original_dom.getElementsByTagName("experiment"):
 
@@ -300,8 +300,6 @@ if __name__ == "__main__":
         if argument_ns.all_experiments == True \
                 or orig_experiment.getAttribute("name") \
                 in argument_ns.experiment:
-
-            processed_experiments.append(orig_experiment.getAttribute("name"))
 
             experiment = orig_experiment.cloneNode(deep = True)
 
@@ -381,7 +379,7 @@ if __name__ == "__main__":
             for exp in vsgen:
                 for exp_clone in range(reps_of_experiment):
                     # Add header in case we are on the first row.
-                    if enum < 1:
+                    if enum == 1:
                         run_table.append([ENR_STR])
                     run_table.append([enum])
 
@@ -396,7 +394,7 @@ if __name__ == "__main__":
                         experiment_instance.appendChild(evs)
 
                         # Add header in case we are on first pass.
-                        if enum < 1:
+                        if enum == 1:
                             run_table[0].append(evs_name)
                         # Always add the current value.
                         run_table[-1].append(evs_value)
@@ -418,6 +416,9 @@ if __name__ == "__main__":
                         sys.exit(ioe.errno)
 
                     enum += 1
+
+                processed_experiments[orig_experiment.getAttribute("name")] = (enum - 1)
+
             # Check if the run table should be saved.
             if argument_ns.create_run_table == True:
                 run_table_file_name = os.path.join(argument_ns.output_dir, 
@@ -440,27 +441,34 @@ if __name__ == "__main__":
     # Each job script needs:
     # * experiment
     # * number of repetitions of experiment
-    numexps = enum - 1
-    if argument_ns.script_template_file != None:
-        script_file_name = os.path.join(argument_ns.script_output_dir, 
-                                        argument_ns.output_prefix 
-                                        + experiment_name
-                                        + "_script"
-                                        + script_extension)
-        try:
-            print(f'DEBUG: numexps = {numexps}')
-            with open(script_file_name, 'w') as scriptfile:
-                createArrayScriptFile(
-                    scriptfile,
-                    nlogo_file_abs,
-                    experiment.getAttribute("name"),
-                    numexps,
-                    script_template_string,
-                    csv_output_dir=argument_ns.csv_output_dir,
-                    )
-        except IOError as ioe:
-            sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
-            sys.exit(ioe.errno)
+    if argument_ns.debug:
+        print(f"DEBUG: No. of processed experiments = {len(processed_experiments)}")
+
+    for experiment_name, numexps in processed_experiments.items():
+        if argument_ns.debug:
+            print(f"DEBUG: experiment_name = {experiment_name}, numexps = {numexps}")
+            print("")
+
+        if argument_ns.script_template_file != None:
+            script_file_name = os.path.join(argument_ns.script_output_dir, 
+                                            argument_ns.output_prefix 
+                                            + experiment_name
+                                            + "_script"
+                                            + script_extension)
+            try:
+                print(f'DEBUG: numexps = {numexps}')
+                with open(script_file_name, 'w') as scriptfile:
+                    createArrayScriptFile(
+                        scriptfile,
+                        nlogo_file_abs,
+                        experiment_name,
+                        numexps,
+                        script_template_string,
+                        csv_output_dir=argument_ns.csv_output_dir,
+                        )
+            except IOError as ioe:
+                sys.stderr.write(ioe.strerror + f" '{ioe.filename}'\n")
+                sys.exit(ioe.errno)
 
     # Warn if some experiments could not be found in the file.
     for ename in argument_ns.experiment:
