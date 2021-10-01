@@ -1,6 +1,6 @@
 # split_nlogo_experiment
 
-Splits NetLogo BehaviorSpace experiments, creating one XML set-up file per possible variable value combination.
+Splits NetLogo BehaviorSpace experiments, creating one XML setup file per possible variable value combination.
 
 
 Author: Lukas Ahrenberg <lukas@ahrenberg.se>
@@ -97,7 +97,7 @@ will, in addition to creating the `experiment<XYZ>.xml` files also create files 
 
 ### The problem
 
-When constructing simulations it is often desirable to run them with a range of different parameter values in order to investigate each parameter's impact on the overall process. In NetLogo such runs are easily configured using the Behavioral space editor where variables can be assigns arbitrary value ranges. Each possible value of variable values result in an unique simulation run however, and for scientific experiments the number of runs can easily grow huge. NetLogo can run these simulations in parallel threads, but does currently not have native support to distribute them over a grid of computers. This must be done by hand. Neither is there functionality to generate individual set-up files from the BehaviorSpace editor.
+When constructing simulations it is often desirable to run them with a range of different parameter values in order to investigate each parameter's impact on the overall process. In NetLogo such runs are easily configured using the Behavioral space editor where variables can be assigns arbitrary value ranges. Each possible value of variable values result in an unique simulation run however, and for scientific experiments the number of runs can easily grow huge. NetLogo can run these simulations in parallel threads, but does currently not have native support to distribute them over a grid of computers. This must be done by hand. Neither is there functionality to generate individual setup files from the BehaviorSpace editor.
 
 `split_nlogo_experiment` was written to do just that.
 
