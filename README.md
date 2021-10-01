@@ -36,15 +36,13 @@ To split an experiment called 'experiment' in the file model.nlogo use:
 
     split_nlogo_experiment model.nlogo experiment
 
-This will produce a set of files called experiment<XYZ>.xml where <XYZ> is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch `--setup-file`, e.g:
+This will produce a set of files called `experiment<XYZ>.xml` where `<XYZ>` is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch `--setup-file`, e.g. to run the first value combination:
 
     netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
 
-To run the first value combination.
-
 The XML files are always given the name of the experiment plus a sequence number. If you want to prefix the file name for some reason you can use the `--output_prefix` option when calling `split_nlogo_experiment`. If you want the XML files output in some other directory than the current use the `--output_dir` option. For instance:
 
-    split_nlogo_experiment --output_dir /tmp --output_prefix my_ model.nlogo experiment
+    split_nlogo_experiment --output_dir /tmp --output_prefix my_model.nlogo experiment
 
 will cause the XML files to be saved in the directory `/tmp` and be named `my_experiment<XYZ>.xml` where `<XYZ>` is, as before, a number from 1 up to N, N being the number of possible variable value combinations.
 
