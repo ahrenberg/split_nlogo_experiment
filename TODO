@@ -1,0 +1,2 @@
+* Have not properly dealt with all_experiments=True + repetitions_per_run:
+** Need to create separate job script for each experiment.
