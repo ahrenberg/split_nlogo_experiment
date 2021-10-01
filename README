@@ -1,5 +1,4 @@
-split_nlogo_experiment
-======================
+# split_nlogo_experiment
 
 Splits netlogo behavioral space experiments, creating one XML set-up file per possible variable value combination.
 
@@ -9,8 +8,7 @@ Author : Lukas Ahrenberg <lukas@ahrenberg.se>
 License : GNU GLP 3 ; See LICENSE.txt for details.
 
 
-About
------
+## About
 
 This script was written to ease the burden of running Netlogo  <http://ccl.northwestern.edu/netlogo/> simulations on computing grids.
 It parses an .nlogo file, looking for the <experiments> XML setup, and then constructs unique set-up files for each variable value combination in the experiment. Each of these files represent a single simulation and can be run in parallel on a computing cluster using netlogo-headless with the --setup-file switch.
@@ -18,24 +16,21 @@ It parses an .nlogo file, looking for the <experiments> XML setup, and then cons
 In addition split_nlogo_experiment has basic templating functionality that can be used to automatically build queuing/execution-scripts.
 
 
-Requirements and testing
-------------------------
+## Requirements and testing
 
 split_nlogo_experiment requires Python <www.python.org> and has been tested with Python 2.7 and 3.2, other Python3 versions should work as well, and perhaps also Python 2.6 (though this has not been tested).
 
 The generated XML files was tested with BehaviorSpace in Netlogo 4.1.3 and 5.0RC7 .
 
 
-Brief manual
-------------
+## Brief manual
 
 For a full list of options run:: 
 
     split_nlogo_experiment -h
 
 
-Basic usage
-~~~~~~~~~~~
+### Basic usage
 
 To split an experiment called 'experiment' in the file model.nlogo use::
 
@@ -55,8 +50,7 @@ will cause the XML files to be saved in the directory /tmp and be named my_exper
 
 Note that all the output directory must exist and be writable. If not an error is produced and the program exits.
 
-How many XML files are generated?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### How many XML files are generated?
 
 Short answer: as many as you have unique combinations of variable values in your BehaviorSpace times the number of repetitions you decide to 'break out' using the --repetitions_per_run switch. 
 
@@ -64,8 +58,7 @@ For example if you have two variables a, and b, and you have configured your Beh
 
 Further, assume that you have set the number of repetitions in your BehaviorSpace experiment to be 10. By default split_nlogo_experiment will preserve this so that you end up with 6 unique files, each creating a run repeating 10 times. However if you had invoked split_nlogo_experiment with the switch '--repetitions_per_run 2', you would end up with 30 files (6 variable combinations, each copied  5 times) set up to run the experiment 2 times each. Likewise using '--repetitions_per_run 5' would create 12 files, each repeating the run 5 times.
 
-Start script templating functionality
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Start script templating functionality
 
 Computing clusters usually have a queuing mechanism where some command script is run in order to commit a job. If the BehaviorSpace experiment result in a large number of simulations this can be a very tedious process if one needs an individual script for each simulation. 
 
@@ -113,19 +106,16 @@ split_nlogo_experiment looks up the absolute path to any file and directory give
 
 
 
-Appendix
---------
+## Appendix
 
-The problem
-~~~~~~~~~~~
+### The problem
 
 When constructing simulations it is often desirable to run them with a range of different parameter values in order to investigate each parameter's impact on the overall process. In Netlogo such runs are easily configured using the Behavioral space editor where variables can be assigns arbitrary value ranges. Each possible value of variable values result in an unique simulation run however, and for scientific experiments the number of runs can easily grow huge. Netlogo can run these simulations in parallel threads, but does currently not have native support to distribute them over a grid of computers. This must be done by hand. Neither is there functionality to generate individual set-up files from the BehaviorSpace editor.
 
 split_nlogo_experiment was written to do just that.
 
 
-Technicalities
-~~~~~~~~~~~~~~
+### Technicalities
 
 split_nlogo_experiment searches the experiment XML description for enumeratedValueSet tags with more than one value as well as steppedValueSet tags. The XML of these nodes are parsed, and the values for the associated variable stored. Following this, one new experiment for every possible variable-value combination is built where the multi-valued tags have been replaced by enumeratedValueSet tags carrying a single possible value. These are saved to XML files.
 
