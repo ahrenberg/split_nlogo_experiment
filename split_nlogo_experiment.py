@@ -209,7 +209,7 @@ if __name__ == "__main__":
     aparser.add_argument("nlogo_file", help = "Netlogo .nlogo file with the original experiment")
     aparser.add_argument("experiment", nargs = "*", help = "Name of one or more experiments in the nlogo file to expand. If none are given, --all_experiments must be set.")
     aparser.add_argument("--all_experiments", action="store_true", help = "If set all experiments in the .nlogo file will be expanded.")
-    aparser.add_argument("--repetitions_per_run", type=int, nargs = 1, help="Number of repetitions per generated experiment run. If the nlogo file is set to repeat an experiment N times, these will be split into N/n individual experiment runs (each repeating n times), where n is the argument given to this switch. Note that if n does not divide N this operation will result in a lower number of total repetitions.")
+    aparser.add_argument("--repetitions_per_run", type=int, default=1, help="Number of repetitions per generated experiment run. If the nlogo file is set to repeat an experiment N times, these will be split into N/n individual experiment runs (each repeating n times), where n is the argument given to this switch. Note that if n does not divide N this operation will result in a lower number of total repetitions.")
     aparser.add_argument("--output_dir", default="./", help = "Path to output directory if not current directory.")
     aparser.add_argument("--output_prefix", default="", help = "Generated files are named after the experiment, if set, the value given for this option will be prefixed to that name.")
     # Scripting options.
@@ -219,8 +219,12 @@ if __name__ == "__main__":
     aparser.add_argument("--create_run_table", action="store_true", help = "Create a csv file containing a table of run numbers and corresponding parameter values. Will be named as the experiment but postfixed with '_run_table.csv'.")
     aparser.add_argument("--no_path_translation", action="store_true", help = "Turn off automatic path translation when generating scripts. Advanced use. By default all file and directory paths given are translated into absolute paths, and the existence of directories are tested. (This is because netlogo-headless.sh always run in the netlogo directory, which create problems with relative paths.) However automatic path translation may cause problems for users who, for instance, want to give paths that do yet exist, or split experiments on a different file system from where the simulations will run. In such cases enabling this option preserves the paths given to the program as they are and it is up to the user to make sure these will work.")
     aparser.add_argument("-v", "--version", action = "version", version = f"split_nlogo_experiment version {__version__}")
+    aparser.add_argument("-d", "--debug", action = "store_true", default=False, help="Print debugging information.")
     
     argument_ns = aparser.parse_args()
+
+    if argument_ns.debug:
+        print(f"DEBUG: argument_ns = {argument_ns}")
 
 
     # Check so that there's either experiments listed, or the all_experiments switch is set.
@@ -312,13 +316,12 @@ if __name__ == "__main__":
             # Repeats of the created experiment.
             reps_of_experiment = 1;
             # Check if we should split experiments. An unset switch or value <= 0 means no splitting.
-            if argument_ns.repetitions_per_run != None \
-                    and argument_ns.repetitions_per_run[0] > 0:
+            if argument_ns.repetitions_per_run > 0:
                 original_reps = int(experiment.getAttribute("repetitions"))
-                if original_reps >= argument_ns.repetitions_per_run[0]:
-                    reps_in_experiment = int(argument_ns.repetitions_per_run[0])
-                    reps_of_experiment = int(original_reps / reps_in_experiment)
-                    if(original_reps % reps_in_experiment != 0):
+                if original_reps >= argument_ns.repetitions_per_run:
+                    reps_in_experiment = argument_ns.repetitions_per_run
+                    reps_of_experiment = original_reps // reps_in_experiment
+                    if (original_reps % reps_in_experiment != 0):
                         sys.stderr.write(f"Warning: Number of repetitions per experiment does not divide the number of repetitions in the nlogo file. New number of repetitions is {(reps_in_experiment*reps_of_experiment)} ({reps_in_experiment} per experiment in {reps_of_experiment} unique script(s)). Original number of repetitions per experiment: {original_reps}.\n")
 
             # Handle enumeratedValueSets
