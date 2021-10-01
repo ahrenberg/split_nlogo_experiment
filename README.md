@@ -25,18 +25,18 @@ The generated XML files was tested with BehaviorSpace in Netlogo 4.1.3 and 5.0RC
 
 ## Brief manual
 
-For a full list of options run:: 
+For a full list of options run: 
 
     split_nlogo_experiment -h
 
 
 ### Basic usage
 
-To split an experiment called 'experiment' in the file model.nlogo use::
+To split an experiment called 'experiment' in the file model.nlogo use:
 
     split_nlogo_experiment model.nlogo experiment
 
-This will produce a set of files called experiment<XYZ>.xml where <XYZ> is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch `--setup-file`, e.g::
+This will produce a set of files called experiment<XYZ>.xml where <XYZ> is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch `--setup-file`, e.g:
 
     netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
 
@@ -75,7 +75,7 @@ Computing clusters usually have a queuing mechanism where some command script is
 * `{numexps}`
   * Total number of experiments.
 
-As an example consider constructing a PBS script for each experiment. This script will issue special PBS commands creating log files, setting the job name, and finally run `netlogo-headless.sh` with the right commands. To do this create a template file looking like::
+As an example consider constructing a PBS script for each experiment. This script will issue special PBS commands creating log files, setting the job name, and finally run `netlogo-headless.sh` with the right commands. To do this create a template file looking like:
 
     #!/bin/bash
     #PBS -N {job}
