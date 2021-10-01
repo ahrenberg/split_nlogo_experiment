@@ -307,7 +307,7 @@ if __name__ == "__main__":
 
                 # Add values to the tuple list.
                 value_tuples.append((svs.getAttribute("variable"),
-                                     [x for x in range(first, last+1, step)))
+                                     [x for x in range(first, last+1, step)]))
                 num_individual_runs *= len(value_tuples[-1][1])
 
                 # Remove node.
