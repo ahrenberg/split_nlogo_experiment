@@ -3,9 +3,9 @@
 Splits NetLogo BehaviorSpace experiments, creating one XML set-up file per possible variable value combination.
 
 
-Author : Lukas Ahrenberg <lukas@ahrenberg.se>
+Author: Lukas Ahrenberg <lukas@ahrenberg.se>
 
-License : GNU GLP 3 ; See LICENSE.txt for details.
+License: GNU GPL-3.0. See LICENSE file for details.
 
 
 ## About
