@@ -228,7 +228,7 @@ if __name__ == "__main__":
 
 
     # Check so that there's either experiments listed, or the all_experiments switch is set.
-    if len(argument_ns.experiment) < 1 and argument_ns.all_experiments == False:
+    if len(argument_ns.experiment) < 1 and argument_ns.all_experiments is False:
         print("Warning. You must either list one or more experiments to expand, or use the --all_experiments switch.")
         sys.exit(0)
 
@@ -252,27 +252,27 @@ if __name__ == "__main__":
     # Absolute paths.
     # We create absolute paths for some files and paths in case given relative.
 
-    if argument_ns.no_path_translation == False:
+    if argument_ns.no_path_translation is False:
         argument_ns.output_dir = os.path.abspath(argument_ns.output_dir)
 
-    if argument_ns.script_output_dir == None:
+    if argument_ns.script_output_dir is None:
         argument_ns.script_output_dir = argument_ns.output_dir
-    elif argument_ns.no_path_translation == False:
+    elif argument_ns.no_path_translation is False:
         argument_ns.script_output_dir = os.path.abspath(argument_ns.script_output_dir)
 
-    if argument_ns.csv_output_dir == None:
+    if argument_ns.csv_output_dir is None:
         argument_ns.csv_output_dir = argument_ns.output_dir
-    elif argument_ns.no_path_translation == False:
+    elif argument_ns.no_path_translation is False:
         argument_ns.csv_output_dir = os.path.abspath(argument_ns.csv_output_dir)
 
     # This is the absolute path name of the nlogo model file.
-    if argument_ns.no_path_translation == False:
+    if argument_ns.no_path_translation is False:
         nlogo_file_abs = os.path.abspath(argument_ns.nlogo_file)
     else:
         nlogo_file_abs = argument_ns.nlogo_file
 
     # Check if scripts should be generated and read the template file.
-    if argument_ns.script_template_file != None:
+    if argument_ns.script_template_file is not None:
         script_extension = os.path.splitext(argument_ns.script_template_file)[1]
         try:
             with open(argument_ns.script_template_file) as pbst:
@@ -314,9 +314,9 @@ if __name__ == "__main__":
             # Number of repetieitons.
             # In the experiment.
             # Read original value first. Default is to have all internal.
-            reps_in_experiment = int(experiment.getAttribute("repetitions"));
+            reps_in_experiment = int(experiment.getAttribute("repetitions"))
             # Repeats of the created experiment.
-            reps_of_experiment = 1;
+            reps_of_experiment = 1
             # Check if we should split experiments. An unset switch or value <= 0 means no splitting.
             if argument_ns.repetitions_per_run > 0:
                 original_reps = int(experiment.getAttribute("repetitions"))
@@ -420,7 +420,7 @@ if __name__ == "__main__":
                 processed_experiments[orig_experiment.getAttribute("name")] = (enum - 1)
 
             # Check if the run table should be saved.
-            if argument_ns.create_run_table == True:
+            if argument_ns.create_run_table:
                 run_table_file_name = os.path.join(argument_ns.output_dir, 
                                                    argument_ns.output_prefix 
                                                    + experiment_name
@@ -449,7 +449,7 @@ if __name__ == "__main__":
             print(f"DEBUG: experiment_name = {experiment_name}, numexps = {numexps}")
             print("")
 
-        if argument_ns.script_template_file != None:
+        if argument_ns.script_template_file is not None:
             script_file_name = os.path.join(argument_ns.script_output_dir, 
                                             argument_ns.output_prefix 
                                             + experiment_name
