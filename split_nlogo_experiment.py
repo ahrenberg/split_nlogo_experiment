@@ -435,6 +435,11 @@ if __name__ == "__main__":
 
 
     # Should a script file be created?
+    # Want one array job script per experiment, to cover all
+    # repetitions and all value sets of an experiment.
+    # Each job script needs:
+    # * experiment
+    # * number of repetitions of experiment
     numexps = enum - 1
     if argument_ns.script_template_file != None:
         script_file_name = os.path.join(argument_ns.script_output_dir, 
