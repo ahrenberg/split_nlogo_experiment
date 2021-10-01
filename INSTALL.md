@@ -6,7 +6,7 @@ The easiest way to install is to run the setup.py script as:
 
     python setup.py install
 
-This may require super user privileges (so you may have to put a sudo in front, or run it as root). You can also install it in your own home directory by using the --user switch:
+This may require super user privileges (so you may have to put a `sudo` in front, or run it as root). You can also install it in your own home directory by using the `--user` switch:
 
     python setup.py install --user
 
