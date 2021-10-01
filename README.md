@@ -84,11 +84,11 @@ As an example consider constructing a PBS script for each experiment. This scrip
     
     netlogo-headless.sh --model {model} --setup-file {setup} --table {csv}
 
-Assume this file is called template.pbs, then calling the split_nlogo_experiment as::
+Assume this file is called `template.pbs`, then calling `split_nlogo_experiment` as:
 
     split_nlogo_experiment --create_script template.pbs model.nlogo experiment
 
-will, in addition to creating the experiment<XYZ>.xml files also create files called `experiment_script<XYZ>.pbs` (file ending will always be the same as for the template file). In these files the keys `{job}` will be replaced by `experiment<XYZ>`, `{model}` by the absolute path name to `model.nlogo`, `{setup}` by the absolute path name to `experiment<XYZ>.xml`, and `{csv}` by the absolute path name to the suggested CSV output file name.
+will, in addition to creating the `experiment<XYZ>.xml` files also create files called `experiment_script<XYZ>.pbs` (file ending will always be the same as for the template file). In these files the keys `{job}` will be replaced by `experiment<XYZ>`, `{model}` by the absolute path name to `model.nlogo`, `{setup}` by the absolute path name to `experiment<XYZ>.xml`, and `{csv}` by the absolute path name to the suggested CSV output file name.
 
 `split_nlogo_experiment` looks up the absolute path to any file and directory given and use this for the keys. The reason for doing so is that the `netlogo-headless.sh` script make the simulation always run in the netlogo directory. This has the side effect that relative paths will not work. As a work around the script translates all paths to absolute paths. If you want to suppress this behavior and always use the file names and paths as given when calling `split_nlogo_experiment` use the `--no_path_translation` switch.
 
