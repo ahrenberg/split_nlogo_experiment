@@ -248,12 +248,13 @@ if __name__ == "__main__":
     processed_experiments = {}
 
     for orig_experiment in original_dom.getElementsByTagName("experiment"):
-        if argument_ns.all_experiments or orig_experiment.getAttribute("name") in argument_ns.experiment:
+        orig_exp_name = orig_experiment.getAttribute("name")
+        if argument_ns.all_experiments or (orig_exp_name in argument_ns.experiment):
 
             experiment = orig_experiment.cloneNode(deep=True)
 
             if argument_ns.debug:
-                print(f"DEBUG: orig_experiment.getAttribute('name') = {orig_experiment.getAttribute('name')}")
+                print(f"DEBUG: orig_exp_name = {orig_exp_name}")
                 print(f"DEBUG: experiment = {experiment}")
 
             # Store tuples of varying variables and their possible values.
@@ -298,8 +299,8 @@ if __name__ == "__main__":
                     # Remove the node.
                     experiment.removeChild(evs)
 
-            # Handle steppedValueSet. These are integers (Java BigDecimal), and inclusive
-            # of last value.
+            # Handle steppedValueSet. These are integers (Java BigDecimal),
+            # and inclusive of last value.
             for svs in experiment.getElementsByTagName("steppedValueSet"):
                 first = int(svs.getAttribute("first"))
                 last = int(svs.getAttribute("last"))
@@ -368,7 +369,7 @@ if __name__ == "__main__":
 
                     enum += 1
 
-                processed_experiments[orig_experiment.getAttribute("name")] = (enum - 1)
+                processed_experiments[orig_exp_name] = (enum - 1)
 
             # Check if the run table should be saved.
             if argument_ns.create_run_table:
