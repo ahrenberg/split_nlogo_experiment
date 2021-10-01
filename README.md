@@ -10,7 +10,7 @@ License : GNU GLP 3 ; See LICENSE.txt for details.
 
 ## About
 
-This script was written to ease the burden of running Netlogo  <http://ccl.northwestern.edu/netlogo/> simulations on computing grids.
+This script was written to ease the burden of running [Netlogo](https://ccl.northwestern.edu/netlogo/) simulations on computing grids.
 It parses an .nlogo file, looking for the <experiments> XML setup, and then constructs unique set-up files for each variable value combination in the experiment. Each of these files represent a single simulation and can be run in parallel on a computing cluster using netlogo-headless with the --setup-file switch.
 
 In addition split_nlogo_experiment has basic templating functionality that can be used to automatically build queuing/execution-scripts.
@@ -18,7 +18,7 @@ In addition split_nlogo_experiment has basic templating functionality that can b
 
 ## Requirements and testing
 
-split_nlogo_experiment requires Python <www.python.org> and has been tested with Python 2.7 and 3.2, other Python3 versions should work as well, and perhaps also Python 2.6 (though this has not been tested).
+split_nlogo_experiment requires [Python](https://www.python.org) and has been tested with Python 2.7 and 3.6, other Python3 versions should work as well, and perhaps also Python 2.6 (though this has not been tested).
 
 The generated XML files was tested with BehaviorSpace in Netlogo 4.1.3 and 5.0RC7 .
 
