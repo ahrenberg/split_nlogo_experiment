@@ -34,17 +34,17 @@ For a full list of options run::
 
 To split an experiment called 'experiment' in the file model.nlogo use::
 
-   split_nlogo_experiment model.nlogo experiment
+    split_nlogo_experiment model.nlogo experiment
 
 This will produce a set of files called experiment<XYZ>.xml where <XYZ> is a zero-padded number. Each XML file represents a unique variable value combination as an experiment. These files can be used with the netlogo switch --setup-file, e.g::
 
-   netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
+    netlogo-headless.sh --model model.nlogo --setup-file experiment0.xml
 
 To run the first value combination.
 
 The XML files are always given the name of the experiment plus a sequence number. If you want to prefix the file name for some reason you can use the --output_prefix option when calling split_nlogo_experiment. If you want the XML files output in some other directory than the current use the --output_dir option. For instance::
 
-   split_nlogo_experiment --output_dir /tmp --output_prefix my_ model.nlogo experiment
+    split_nlogo_experiment --output_dir /tmp --output_prefix my_ model.nlogo experiment
 
 will cause the XML files to be saved in the directory /tmp and be named my_experiment<XYZ>.xml where <XYZ> is, as before, a number from 0 up to N-1. N being the number of possible variable value combinations.
 
@@ -90,15 +90,15 @@ split_nlogo_experiment has a very basic templating mechanism that may be used to
 
 As an example consider constructing a PBS script for each experiment. This script will issue special PBS commands creating log files, setting the job name, and finally run netlogo-headless with the right commands. To do this create a template file looking like::
 
-   #!/bin/bash
-   #PBS -N {job}
-   #PBS -o /tmp/{job}.log
-   #PBS -e /tmp/{job}_error.log
-   netlogo-headless.sh --model {model} --setup-file {setup} --table {csv}
+    #!/bin/bash
+    #PBS -N {job}
+    #PBS -o /tmp/{job}.log
+    #PBS -e /tmp/{job}_error.log
+    netlogo-headless.sh --model {model} --setup-file {setup} --table {csv}
 
 Assume this file is called template.pbs, then calling the split_nlogo_experiment as::
 
-      split_nlogo_experiment --create_script template.pbs model.nlogo experiment
+    split_nlogo_experiment --create_script template.pbs model.nlogo experiment
 
 will, in addition to creating the experiment<XYZ>.xml files also create files called experiment_script<XYZ>.pbs (file ending will always be the same as for the template file). In these files the keys {job} will be replaced by experiment<XYZ>, {model} by the absolute path name to model.nlogo, {setup} by the absolute path name to experiment<XYZ>.xml, and {csv} by the absolute path name to the suggested CSV output file name.
 
