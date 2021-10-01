@@ -64,15 +64,15 @@ Computing clusters usually have a queuing mechanism where some command script is
 
 `split_nlogo_experiment` has a very basic templating mechanism that may be used to produce an additional file with each simulation XML file. The option `--create_script` takes a file name as parameter. This file is read and a specialized version having key names replaced with current values are saved for each XML file. Allowed keys are:
 
-* {model}
+* `{model}`
   * The value of the parameter nlogofile.
-* {modelname}
+* `{modelname}`
   * The model name, i.e. .nlogo filename without the extension.
-* {experiment}
+* `{experiment}`
   * The value of the parameter experiment.
-* {csvfpath}
+* `{csvfpath}`
   * Directory where CSV files will be placed.
-* {numexps}
+* `{numexps}`
   * Total number of experiments.
 
 As an example consider constructing a PBS script for each experiment. This script will issue special PBS commands creating log files, setting the job name, and finally run `netlogo-headless.sh` with the right commands. To do this create a template file looking like::
