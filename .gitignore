@@ -13,8 +13,14 @@ MANIFEST
 # a copy of the .py file created by the setup.
 scripts
 
-# Ingore the build and dist directories
-
+# Igore the build and dist directories
 build
-
 dist
+
+# Ignore slurm job output and error
+*.out
+*.err
+
+# Ignore Netlogo and XML files
+*.nlogo
+*.xml
