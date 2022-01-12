@@ -32,6 +32,10 @@ perhaps also Python 2.6 (though this has not been tested).
 The generated XML files was tested with BehaviorSpace in NetLogo 4.1.3 and 
 5.0RC7.
 
+## Installation
+
+See the file `INSTALL.md`
+
 
 ## Brief manual
 
