@@ -2,6 +2,8 @@
 
 ## Using setup.py
 
+**CAUTION** It is not recommended to use the `setup.py` file for installation.
+
 The easiest way to install is to run the setup.py script as:
 
     python setup.py install
@@ -19,13 +21,15 @@ this option you may need to edit your `$PATH` variable.
 Run `python setup.py --help` for many more options regarding the `setup.py` 
 script.
 
+
 ## By hand
 
-If you for some reason don't want to use the `setup.py` script you can just 
-copy `split_nlogo_experiment.py` (or `scripts/split_nlogo_experiment` if you 
-have a distribution - it's just a copy of the first file) to any location of 
-your own choice or even run it from the directory directly. It's just a single 
-file. 
+Simply copy the file `split_nlogo_experiment.py` to a directory in your
+`PATH`. E.g. if you have `~/bin` in your `PATH`:
+```
+$ chmod +x split_nlogo_experiment.py
+$ cp split_nlogo_experiment.py ~/bin/split_nlogo_experiment
+```
 
-If needed, you could also change the file permissions to executable if you want 
-to be able to call it like a script.
+N.B. we have dropped the `.py` extension: that keeps the following
+documentation consistent.
