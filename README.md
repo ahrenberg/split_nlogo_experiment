@@ -33,6 +33,20 @@ The generated XML files was tested with BehaviorSpace in Netlogo 4.1.3 and
 5.0RC7.
 
 
+## Installation
+**CAUTION** It is not recommended to use the `setup.py` file for installation.
+
+Simply copy the file `split_nlogo_experiment.py` to a directory in your
+`PATH`. E.g. if you have `~/bin` in your `PATH`:
+```
+$ chmod +x split_nlogo_experiment.py
+$ cp split_nlogo_experiment.py ~/bin/split_nlogo_experiment
+```
+
+N.B. we have dropped the `.py` extension: that keeps the following
+documentation consistent.
+
+
 ## Brief manual
 
 For a full list of options run: 
