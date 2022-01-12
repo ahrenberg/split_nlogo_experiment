@@ -12,7 +12,7 @@ License: GNU GPL-3.0. See LICENSE file for details.
 ## About
 
 This script was written to ease the burden of running 
-[Netlogo](https://ccl.northwestern.edu/netlogo/) simulations on computing grids.
+[NetLogo](https://ccl.northwestern.edu/netlogo/) simulations on computing grids.
 It parses a `.nlogo` file, looking for the `<experiments>` XML setup, and then 
 constructs unique setup files for each variable value combination in the 
 experiment. Each of these files represents a single simulation and can be run 
@@ -29,7 +29,7 @@ can be used to automatically generate a job array script.
 tested with Python 2.7 and 3.6, other Python3 versions should work as well, and 
 perhaps also Python 2.6 (though this has not been tested).
 
-The generated XML files was tested with BehaviorSpace in Netlogo 4.1.3 and 
+The generated XML files was tested with BehaviorSpace in NetLogo 4.1.3 and 
 5.0RC7.
 
 
@@ -62,7 +62,7 @@ To split an experiment called 'experiment' in the file model.nlogo use:
 
 This will produce a set of files called `experiment_<XYZ>.xml` where `<XYZ>` is 
 a zero-padded number. Each XML file represents a unique variable value 
-combination as an experiment. These files can be used with the netlogo switch 
+combination as an experiment. These files can be used with the NetLogo switch 
 `--setup-file`, e.g. to run the first value combination:
 
     netlogo-headless.sh --model model.nlogo --setup-file experiment_0.xml
